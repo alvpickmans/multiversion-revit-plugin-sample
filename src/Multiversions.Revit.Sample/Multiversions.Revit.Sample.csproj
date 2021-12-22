@@ -14,10 +14,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Configurations>Debug;Debug One;Release</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <!-- Please remove the targets you don't need in order
       to exclude Revit versions your add-in won't support
       use the list below for matching Revit version with .NET target
@@ -48,16 +44,6 @@
     <RevitVersion>2021</RevitVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug One'">
-    <!-- You could debug just ONE addin version,
-         instead of building all the versions above.
-         Just put ONE target from the list above
-         e.g. if you want to debug ONLY Revit 2019,
-         put net47 below and switch to 'Debug One' configuration
-      -->
-    <TargetFrameworks>net48</TargetFrameworks>
-  </PropertyGroup>
-
   <PropertyGroup>
     <!-- Forcibly set platform to 'x64' and ignore architecture-related problems -->
     <PlatformTarget>x64</PlatformTarget>
@@ -83,12 +69,6 @@
   <!--We can define our custom preprocessor constants to simplify our project code-->
   <PropertyGroup Condition="'$(RevitVersion)' != '2018' AND '$(RevitVersion)' != '2019' AND '$(RevitVersion)' != '2020'">
     <DefineConstants>$(DefineConstants);USE_FORGETYPEID</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
-    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
-    <OutputPath>..\bin\Debug\$(RevitVersion)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -123,7 +103,7 @@
       <AddinManifest Include="$(OutputPath)\$(AssemblyName).addin" />
     </ItemGroup>
     <ReplaceFileText Condition="'$(Configuration)' == 'Release'" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$(AssemblyName).dll&lt;" />
-    <ReplaceFileText Condition="$(Configuration.Contains('Debug'))" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$([System.IO.Path]::GetFullPath('$(OutputPath)'))$(AssemblyName).dll&lt;" />
+    <ReplaceFileText Condition="'$(Configuration)' == 'Debug'" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$([System.IO.Path]::GetFullPath('$(OutputPath)'))$(AssemblyName).dll&lt;" />
   </Target>
 
   <!-- Define the ReplaceFileText task for .NET Framework  -->
@@ -168,7 +148,7 @@
   </UsingTask>
 
   <!-- For the Debug configuration copy the addin to $(AppData)\Autodesk\Revit\Addins\  -->
-  <Target Name="CopyAddinsToAppData" AfterTargets="CreateAddinManifest" Condition="$(Configuration.Contains('Debug'))">
+  <Target Name="CopyAddinsToAppData" AfterTargets="CreateAddinManifest" Condition="'$(Configuration)' == 'Debug'">
     <Message Importance="high" Text="Copying addin file into Revit Addin folder" />
     <ItemGroup>
       <AddinFiles Include="$(OutputPath)\..\**\*.addin" />
