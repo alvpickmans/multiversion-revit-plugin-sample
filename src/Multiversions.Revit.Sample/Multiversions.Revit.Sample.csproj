@@ -1,6 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>8648407C-C0ED-4D95-8082-E4E3877D441F</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>AlvaroPickmans</Authors>
+    <Company>matterlab</Company>
+    <Product>Multiversions.Revit.Sample</Product>
+    <Description>A multiversion Revit add-in sample.</Description>
+    <Copyright>© Copyright 2021</Copyright>
+    <PackageProjectUrl>https://www.matterlab.co/post/multiversion-revit-plugins-explained</PackageProjectUrl>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Configurations>Debug;Debug One;Release</Configurations>
   </PropertyGroup>
 
@@ -54,10 +66,6 @@
 
     <!-- Force the project to use the legacy debugger engine -->
     <DebugEngines>{351668CC-8477-4fbf-BFE3-5F1006E4DB1F}</DebugEngines>
-
-    <!-- Invert the behavior of new .csproj format - exclude files by default -->
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultItems>false</EnableDefaultItems>
 
     <!-- Define handy symbols to use in the code in order to accommodate different Revit versions,
     e.g. by wrapping legacy / deprecated API calls with #if REVIT2014 | REVIT2015 -->
@@ -123,23 +131,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="FloorAreaCommand.cs" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <RootNamespace>Multiversions.Revit.Sample</RootNamespace>
-    <AssemblyName>Multiversions.Revit.Sample</AssemblyName>
-
-    <Authors>AlvaroPickmans</Authors>
-    <PackageId>8648407C-C0ED-4D95-8082-E4E3877D441F</PackageId>
-    <Company>Acme Ltd</Company>
-    <PackageProjectUrl>http://example.com/test</PackageProjectUrl>
-    <Product>Multiversions.Revit.Sample</Product>
-    <Version>0.0.1</Version>
-    <NeutralLanguage>en</NeutralLanguage>
-  </PropertyGroup>
 
   <Target Name="CreateAddinManifest" AfterTargets="AfterBuild">
     <ItemGroup>
