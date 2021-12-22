@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Set metadata for the assembly -->
   <PropertyGroup>
     <PackageId>8648407C-C0ED-4D95-8082-E4E3877D441F</PackageId>
     <Version>0.0.1</Version>
@@ -101,6 +102,14 @@
     <PackageReference Include="Autodesk.Revit.SDK" Version="$(RevitVersion).*" PrivateAssets="All" />
   </ItemGroup>
 
+  <!-- Use the assembly name for the add-in manifest and copy it to the output -->
+  <ItemGroup>
+    <None Update="Manifests\AddinTemplate.addin">
+      <Link>$(AssemblyName).addin</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PreventRevitSDKCopyLocal" AfterTargets="ResolveReferences">
     <ItemGroup>
       <!-- A temporary fix for Revit SDK files being copied to the output folder -->
@@ -108,33 +117,16 @@
     </ItemGroup>
   </Target>
 
-  <ItemGroup>
-    <!-- Add-in manifest is processed via MSBuild -->
-    <Content Include="Manifests/AddinTemplate.addin">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-
-    <EmbeddedResource Include="Resources\**\*.*">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-
-    <Content Include="Properties\launchSettings.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
+  <!-- Set the assembly path in the add-in manifest -->
   <Target Name="CreateAddinManifest" AfterTargets="AfterBuild">
     <ItemGroup>
       <AddinManifest Include="$(OutputPath)\$(AssemblyName).addin" />
     </ItemGroup>
-    <ReplaceFileText InputFilename="Manifests/AddinTemplate.addin" OutputFilename="@(AddinManifest)" MatchExpression="VendorDescription&gt;(.*?)&lt;" ReplacementText="VendorDescription&gt;$(Authors), $(Company), $(PackageProjectUrl)&lt;" />
-    <ReplaceFileText InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="FullClassName&gt;((.*?)\.)+" ReplacementText="FullClassName&gt;$(RootNamespace)." />
-    <ReplaceFileText InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="&lt;Name&gt;(.*?)&lt;" ReplacementText="&lt;Name&gt;$(Product)&lt;" />
-    <ReplaceFileText InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="&lt;VendorId&gt;(.*?)&lt;" ReplacementText="&lt;VendorId&gt;$(PackageId)&lt;" />
     <ReplaceFileText Condition="'$(Configuration)' == 'Release'" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$(AssemblyName).dll&lt;" />
     <ReplaceFileText Condition="$(Configuration.Contains('Debug'))" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$([System.IO.Path]::GetFullPath('$(OutputPath)'))$(AssemblyName).dll&lt;" />
   </Target>
 
+  <!-- Define the ReplaceFileText task for .NET Framework  -->
   <UsingTask Condition="'$(MSBuildRuntimeType)' == 'Full'" TaskName="ReplaceFileText" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <InputFilename ParameterType="System.String" Required="true" />
@@ -155,6 +147,7 @@
     </Task>
   </UsingTask>
 
+  <!-- Define the ReplaceFileText task for .NET Core  -->
   <UsingTask Condition="'$(MSBuildRuntimeType)' == 'Core'" TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <InputFilename ParameterType="System.String" Required="true" />
@@ -174,8 +167,8 @@
     </Task>
   </UsingTask>
 
+  <!-- For the Debug configuration copy the addin to $(AppData)\Autodesk\Revit\Addins\  -->
   <Target Name="CopyAddinsToAppData" AfterTargets="CreateAddinManifest" Condition="$(Configuration.Contains('Debug'))">
-    <!-- Copy newly compiled add-in files to AppData folder (before starting the debugger) -->
     <Message Importance="high" Text="Copying addin file into Revit Addin folder" />
     <ItemGroup>
       <AddinFiles Include="$(OutputPath)\..\**\*.addin" />
@@ -183,8 +176,8 @@
     <Copy SourceFiles="@(AddinFiles)" DestinationFolder="$(AppData)\Autodesk\Revit\Addins\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
   </Target>
 
+  <!-- Delete previously deployed to AppData folder add-in files -->
   <Target Name="CleanAddinsInAppData" AfterTargets="AfterClean">
-    <!-- Delete previously deployed to AppData folder add-in files -->
     <ItemGroup>
       <AddinFiles Include="$(AppData)\Autodesk\Revit\Addins\**\$(AssemblyName).*" />
     </ItemGroup>
