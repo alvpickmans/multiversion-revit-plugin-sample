@@ -69,8 +69,7 @@
 
     <!-- Define handy symbols to use in the code in order to accommodate different Revit versions,
     e.g. by wrapping legacy / deprecated API calls with #if REVIT2014 | REVIT2015 -->
-    <DefineConstants>REVIT$(RevitVersion);WINFORMS</DefineConstants>
-    <PreprocessorDefinitions>$(DefineConstants)</PreprocessorDefinitions>
+    <DefineConstants>REVIT$(RevitVersion)</DefineConstants>
 
     <!-- Multiple targets can cause obj folder locking by concurrent builds -->
     <BuildInParallel>false</BuildInParallel>
@@ -83,7 +82,6 @@
   <!--We can define our custom preprocessor constants to simplify our project code-->
   <PropertyGroup Condition="'$(RevitVersion)' != '2018' AND '$(RevitVersion)' != '2019' AND '$(RevitVersion)' != '2020'">
     <DefineConstants>$(DefineConstants);USE_FORGETYPEID</DefineConstants>
-    <PreprocessorDefinitions>$(DefineConstants)</PreprocessorDefinitions>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
@@ -96,10 +94,6 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains('WINFORMS'))">
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>
