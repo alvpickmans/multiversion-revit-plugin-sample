@@ -1,48 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Set metadata for the assembly -->
   <PropertyGroup>
-    <Configurations>Debug;Debug One;Release</Configurations>
+    <PackageId>8648407C-C0ED-4D95-8082-E4E3877D441F</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>AlvaroPickmans</Authors>
+    <Company>matterlab</Company>
+    <Product>Multiversions.Revit.Sample</Product>
+    <Description>A multiversion Revit add-in sample.</Description>
+    <Copyright>© Copyright 2021</Copyright>
+    <PackageProjectUrl>https://www.matterlab.co/post/multiversion-revit-plugins-explained</PackageProjectUrl>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Please remove the targets you don't need in order
-      to exclude Revit versions your add-in won't support
-      use the list below for matching Revit version with .NET target
-              2014  |  net40
-              2015  |  net45
-              2016  |  net451
-              2017  |  net452
-              2018  |  net46
-              2019  |  net47
-              2020  |  net471
-              2021  |  net48
-      For example you can exclude Revit 2014, by simply removing net40 target belows
-      -->
-    <TargetFrameworks>net46;net47;net471;net48</TargetFrameworks>
-    <RuntimeIdentifiers>win</RuntimeIdentifiers>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <RevitVersion>2018</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net47' ">
-    <RevitVersion>2019</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
-    <RevitVersion>2020</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <!-- Debug configuration - Individual Revit version -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <!-- Set the desired Revit version to Debug here -->
     <RevitVersion>2021</RevitVersion>
+
+    <TargetFramework Condition="'$(RevitVersion)' == '2018'">net46</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2019'">net47</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2020'">net471</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2021'">net48</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2022'">net48</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug One'">
-    <!-- You could debug just ONE addin version,
-         instead of building all the versions above.
-         Just put ONE target from the list above
-         e.g. if you want to debug ONLY Revit 2019,
-         put net47 below and switch to 'Debug One' configuration
-      -->
-    <TargetFrameworks>net48</TargetFrameworks>
+  <!-- Release configuration - All Revit versions -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!-- Specify the desired Revit versions (by their target framework) to release here -->
+    <TargetFrameworks>net46;net47;net471;net48</TargetFrameworks>
+
+    <RevitVersion Condition="'$(TargetFramework)' == 'net46'">2018</RevitVersion>
+    <RevitVersion Condition="'$(TargetFramework)' == 'net47'">2019</RevitVersion>
+    <RevitVersion Condition="'$(TargetFramework)' == 'net471'">2020</RevitVersion>
+    <RevitVersion Condition="'$(TargetFramework)' == 'net48'">2021</RevitVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -50,18 +41,14 @@
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <NoWarn>NETSDK1049</NoWarn>
 
     <!-- Force the project to use the legacy debugger engine -->
     <DebugEngines>{351668CC-8477-4fbf-BFE3-5F1006E4DB1F}</DebugEngines>
 
-    <!-- Invert the behavior of new .csproj format - exclude files by default -->
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultItems>false</EnableDefaultItems>
-
     <!-- Define handy symbols to use in the code in order to accommodate different Revit versions,
     e.g. by wrapping legacy / deprecated API calls with #if REVIT2014 | REVIT2015 -->
-    <DefineConstants>REVIT$(RevitVersion);WINFORMS</DefineConstants>
-    <PreprocessorDefinitions>$(DefineConstants)</PreprocessorDefinitions>
+    <DefineConstants>REVIT$(RevitVersion)</DefineConstants>
 
     <!-- Multiple targets can cause obj folder locking by concurrent builds -->
     <BuildInParallel>false</BuildInParallel>
@@ -74,13 +61,6 @@
   <!--We can define our custom preprocessor constants to simplify our project code-->
   <PropertyGroup Condition="'$(RevitVersion)' != '2018' AND '$(RevitVersion)' != '2019' AND '$(RevitVersion)' != '2020'">
     <DefineConstants>$(DefineConstants);USE_FORGETYPEID</DefineConstants>
-    <PreprocessorDefinitions>$(DefineConstants)</PreprocessorDefinitions>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
-    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
-    <OutputPath>..\bin\Debug\$(RevitVersion)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -89,16 +69,17 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(DefineConstants.Contains('WINFORMS'))">
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
   <ItemGroup>
     <!--Conditionaly reference the latest Revit SDK assemblies dependending on which version we are targeting-->
-    <PackageReference Include="Autodesk.Revit.SDK" Version="2018.*" Condition=" '$(RevitVersion)' == '2018' " PrivateAssets="All" />
-    <PackageReference Include="Autodesk.Revit.SDK" Version="2019.*" Condition=" '$(RevitVersion)' == '2019' " PrivateAssets="All" />
-    <PackageReference Include="Autodesk.Revit.SDK" Version="2020.*" Condition=" '$(RevitVersion)' == '2020' " PrivateAssets="All" />
-    <PackageReference Include="Autodesk.Revit.SDK" Version="2021.*" Condition=" '$(RevitVersion)' == '2021' " PrivateAssets="All" />
+    <PackageReference Include="Autodesk.Revit.SDK" Version="$(RevitVersion).*" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Use the assembly name for the add-in manifest and copy it to the output -->
+  <ItemGroup>
+    <None Update="Manifests\AddinTemplate.addin">
+      <Link>$(AssemblyName).addin</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="PreventRevitSDKCopyLocal" AfterTargets="ResolveReferences">
@@ -108,50 +89,16 @@
     </ItemGroup>
   </Target>
 
-  <ItemGroup>
-    <!-- Add-in manifest is processed via MSBuild -->
-    <Content Include="Manifests/AddinTemplate.addin">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-
-    <EmbeddedResource Include="Resources\**\*.*">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-
-    <Content Include="Properties\launchSettings.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="FloorAreaCommand.cs" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <RootNamespace>Multiversions.Revit.Sample</RootNamespace>
-    <AssemblyName>Multiversions.Revit.Sample</AssemblyName>
-
-    <Authors>AlvaroPickmans</Authors>
-    <PackageId>8648407C-C0ED-4D95-8082-E4E3877D441F</PackageId>
-    <Company>Acme Ltd</Company>
-    <PackageProjectUrl>http://example.com/test</PackageProjectUrl>
-    <Product>Multiversions.Revit.Sample</Product>
-    <Version>0.0.1</Version>
-    <NeutralLanguage>en</NeutralLanguage>
-  </PropertyGroup>
-
+  <!-- Set the assembly path in the add-in manifest -->
   <Target Name="CreateAddinManifest" AfterTargets="AfterBuild">
     <ItemGroup>
       <AddinManifest Include="$(OutputPath)\$(AssemblyName).addin" />
     </ItemGroup>
-    <ReplaceFileText InputFilename="Manifests/AddinTemplate.addin" OutputFilename="@(AddinManifest)" MatchExpression="VendorDescription&gt;(.*?)&lt;" ReplacementText="VendorDescription&gt;$(Authors), $(Company), $(PackageProjectUrl)&lt;" />
-    <ReplaceFileText InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="FullClassName&gt;((.*?)\.)+" ReplacementText="FullClassName&gt;$(RootNamespace)." />
-    <ReplaceFileText InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="&lt;Name&gt;(.*?)&lt;" ReplacementText="&lt;Name&gt;$(Product)&lt;" />
-    <ReplaceFileText InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="&lt;VendorId&gt;(.*?)&lt;" ReplacementText="&lt;VendorId&gt;$(PackageId)&lt;" />
     <ReplaceFileText Condition="'$(Configuration)' == 'Release'" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$(AssemblyName).dll&lt;" />
-    <ReplaceFileText Condition="$(Configuration.Contains('Debug'))" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$([System.IO.Path]::GetFullPath('$(OutputPath)'))$(AssemblyName).dll&lt;" />
+    <ReplaceFileText Condition="'$(Configuration)' == 'Debug'" InputFilename="@(AddinManifest)" OutputFilename="@(AddinManifest)" MatchExpression="Assembly&gt;(.*?)&lt;" ReplacementText="Assembly&gt;$([System.IO.Path]::GetFullPath('$(OutputPath)'))$(AssemblyName).dll&lt;" />
   </Target>
 
+  <!-- Define the ReplaceFileText task for .NET Framework  -->
   <UsingTask Condition="'$(MSBuildRuntimeType)' == 'Full'" TaskName="ReplaceFileText" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
       <InputFilename ParameterType="System.String" Required="true" />
@@ -166,12 +113,13 @@
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-              File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
-        ]]>
+            File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
+      ]]>
       </Code>
     </Task>
   </UsingTask>
 
+  <!-- Define the ReplaceFileText task for .NET Core  -->
   <UsingTask Condition="'$(MSBuildRuntimeType)' == 'Core'" TaskName="ReplaceFileText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <InputFilename ParameterType="System.String" Required="true" />
@@ -185,14 +133,14 @@
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-              File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
-        ]]>
+            File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
+      ]]>
       </Code>
     </Task>
   </UsingTask>
 
-  <Target Name="CopyAddinsToAppData" AfterTargets="CreateAddinManifest" Condition="$(Configuration.Contains('Debug'))">
-    <!-- Copy newly compiled add-in files to AppData folder (before starting the debugger) -->
+  <!-- For the Debug configuration copy the addin to $(AppData)\Autodesk\Revit\Addins\  -->
+  <Target Name="CopyAddinsToAppData" AfterTargets="CreateAddinManifest" Condition="'$(Configuration)' == 'Debug'">
     <Message Importance="high" Text="Copying addin file into Revit Addin folder" />
     <ItemGroup>
       <AddinFiles Include="$(OutputPath)\..\**\*.addin" />
@@ -200,8 +148,8 @@
     <Copy SourceFiles="@(AddinFiles)" DestinationFolder="$(AppData)\Autodesk\Revit\Addins\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
   </Target>
 
+  <!-- Delete previously deployed to AppData folder add-in files -->
   <Target Name="CleanAddinsInAppData" AfterTargets="AfterClean">
-    <!-- Delete previously deployed to AppData folder add-in files -->
     <ItemGroup>
       <AddinFiles Include="$(AppData)\Autodesk\Revit\Addins\**\$(AssemblyName).*" />
     </ItemGroup>
