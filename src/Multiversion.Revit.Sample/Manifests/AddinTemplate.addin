@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
+
   <AddIn Type="Command">
-    <FullClassName>Multiversions.Revit.Sample.FloorAreaCommand</FullClassName>
-    <AddInId>D51C131A-5E50-4A2B-8F52-D8036AA7A701</AddInId>
-    <Text>Multiversions.Revit.Sample - Floor Area</Text>
+    <Name>Multiversion Revit Add-in Sample</Name>
+    <FullClassName>Multiversion.Revit.Sample.FloorAreaCommand</FullClassName>
+    <Text>Multiversion.Revit.Sample - Floor Area</Text>
     <Description>The description for your command goes here</Description>
-    <Assembly>Multiversions.Revit.Sample.dll</Assembly>
-    <VendorId>== Edit in project's properties ==</VendorId>
-    <VendorDescription>== Edit (company + authors + website) in project's properties ==</VendorDescription>
+    <Assembly>[The assembly path is defined automatically during the build process]</Assembly>
+    <AddInId>D51C131A-5E50-4A2B-8F52-D8036AA7A701</AddInId>
+    <VendorId>Alvaro Pickmans</VendorId>
+    <VendorDescription>Alvaro Pickmans, matterlab, https://www.matterlab.co/post/multiversion-revit-plugins-explained</VendorDescription>
 
     <VisibilityMode>AlwaysVisible</VisibilityMode>
 
