@@ -13,35 +13,27 @@
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Please remove the targets you don't need in order
-      to exclude Revit versions your add-in won't support
-      use the list below for matching Revit version with .NET target
-              2014  |  net40
-              2015  |  net45
-              2016  |  net451
-              2017  |  net452
-              2018  |  net46
-              2019  |  net47
-              2020  |  net471
-              2021  |  net48
-      For example you can exclude Revit 2014, by simply removing net40 target belows
-      -->
-    <TargetFrameworks>net46;net47;net471;net48</TargetFrameworks>
-    <RuntimeIdentifiers>win</RuntimeIdentifiers>
+  <!-- Debug configuration - Individual Revit version -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <!-- Set the desired Revit version to Debug here -->
+    <RevitVersion>2021</RevitVersion>
+
+    <TargetFramework Condition="'$(RevitVersion)' == '2018'">net46</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2019'">net47</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2020'">net471</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2021'">net48</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2022'">net48</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <RevitVersion>2018</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net47' ">
-    <RevitVersion>2019</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
-    <RevitVersion>2020</RevitVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <RevitVersion>2021</RevitVersion>
+  <!-- Release configuration - All Revit versions -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!-- Specify the desired Revit versions (by their target framework) to release here -->
+    <TargetFrameworks>net46;net47;net471;net48</TargetFrameworks>
+
+    <RevitVersion Condition="'$(TargetFramework)' == 'net46'">2018</RevitVersion>
+    <RevitVersion Condition="'$(TargetFramework)' == 'net47'">2019</RevitVersion>
+    <RevitVersion Condition="'$(TargetFramework)' == 'net471'">2020</RevitVersion>
+    <RevitVersion Condition="'$(TargetFramework)' == 'net48'">2021</RevitVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -121,8 +113,8 @@
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-              File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
-        ]]>
+            File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
+      ]]>
       </Code>
     </Task>
   </UsingTask>
@@ -141,8 +133,8 @@
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
-              File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
-        ]]>
+            File.WriteAllText(OutputFilename,Regex.Replace(File.ReadAllText(InputFilename),MatchExpression,ReplacementText));
+      ]]>
       </Code>
     </Task>
   </UsingTask>
