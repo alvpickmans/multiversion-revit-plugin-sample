@@ -3,7 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 
-namespace Multiversions.Revit.Sample
+namespace Multiversion.Revit.Sample
 {
     /// <summary>
     /// A sample command.

@@ -3,8 +3,8 @@
 
   <AddIn Type="Command">
     <Name>Multiversion Revit Add-in Sample</Name>
-    <FullClassName>Multiversions.Revit.Sample.FloorAreaCommand</FullClassName>
-    <Text>Multiversions.Revit.Sample - Floor Area</Text>
+    <FullClassName>Multiversion.Revit.Sample.FloorAreaCommand</FullClassName>
+    <Text>Multiversion.Revit.Sample - Floor Area</Text>
     <Description>The description for your command goes here</Description>
     <Assembly>[The assembly path is defined automatically during the build process]</Assembly>
     <AddInId>D51C131A-5E50-4A2B-8F52-D8036AA7A701</AddInId>
