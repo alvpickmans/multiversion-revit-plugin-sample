@@ -1,5 +1,29 @@
 {
   "profiles": {
+    "Revit 2026": {
+      "commandName": "Executable",
+      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2026\\Revit.exe",
+      "commandLineArgs": "",
+      "use64Bit": true
+    },
+    "Revit 2025": {
+      "commandName": "Executable",
+      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2025\\Revit.exe",
+      "commandLineArgs": "",
+      "use64Bit": true
+    },
+    "Revit 2024": {
+      "commandName": "Executable",
+      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2024\\Revit.exe",
+      "commandLineArgs": "",
+      "use64Bit": true
+    },
+    "Revit 2023": {
+      "commandName": "Executable",
+      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2023\\Revit.exe",
+      "commandLineArgs": "",
+      "use64Bit": true
+    },
     "Revit 2022": {
       "commandName": "Executable",
       "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2022\\Revit.exe",
@@ -27,30 +51,6 @@
     "Revit 2018": {
       "commandName": "Executable",
       "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2018\\Revit.exe",
-      "commandLineArgs": "",
-      "use64Bit": true
-    },
-    "Revit 2017": {
-      "commandName": "Executable",
-      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2017\\Revit.exe",
-      "commandLineArgs": "",
-      "use64Bit": true
-    },
-    "Revit 2016": {
-      "commandName": "Executable",
-      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2016\\Revit.exe",
-      "commandLineArgs": "",
-      "use64Bit": true
-    },
-    "Revit 2015": {
-      "commandName": "Executable",
-      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2015\\Revit.exe",
-      "commandLineArgs": "",
-      "use64Bit": true
-    },
-    "Revit 2014": {
-      "commandName": "Executable",
-      "executablePath": "%ProgramW6432%\\Autodesk\\Revit 2014\\Revit.exe",
       "commandLineArgs": "",
       "use64Bit": true
     }

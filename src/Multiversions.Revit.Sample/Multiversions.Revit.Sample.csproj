@@ -1,10 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	
   <PropertyGroup>
-    <Configurations>Debug;Debug One;Release</Configurations>
+    <Configurations>Debug24-;Debug25+;Release</Configurations>
   </PropertyGroup>
 
+  <!-- Disable editorconfig -->
   <PropertyGroup>
+	<GenerateMSBuildEditorConfigFile>false</GenerateMSBuildEditorConfigFile>
+  </PropertyGroup>
+
+	<PropertyGroup>
     <!-- Please remove the targets you don't need in order
       to exclude Revit versions your add-in won't support
       use the list below for matching Revit version with .NET target
@@ -25,9 +30,19 @@
       -->
     <TargetFrameworks>net46;net47;net471;net48;net8.0-windows</TargetFrameworks>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <RevitVersion Condition=" '$(RevitVersion)' == '' ">2025</RevitVersion>
+    <RevitVersion Condition=" '$(RevitVersion)' == '' ">2024</RevitVersion>
   </PropertyGroup>
-
+	
+  <!-- START: 
+                    2024
+  -->
+  <!-- DISPATCH:
+                    2018, 2019, 2020, 2021, 2025
+  -->
+  <!-- POST DISPATCH:
+	                2022, 2023, 2026
+  -->
+	
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <RevitVersion>2018</RevitVersion>
   </PropertyGroup>
@@ -40,15 +55,22 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <RevitVersion>2021</RevitVersion>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+	  <RevitVersion>2025</RevitVersion>
+  </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug One'">
-    <!-- You could debug just ONE addin version,
-         instead of building all the versions above.
-         Just put ONE target from the list above
-         e.g. if you want to debug ONLY Revit 2019,
-         put net47 below and switch to 'Debug One' configuration
-      -->
-    <TargetFrameworks>net48</TargetFrameworks>
+  <!-- Force legacy debugger required for Revit 2018 - 2024 -->	
+  <PropertyGroup Condition="'$(Configuration)'=='Debug24-'">
+    <MSBuildRemoveProperties>TargetFrameworks</MSBuildRemoveProperties>
+    <TargetFrameworks>net48;net47</TargetFrameworks>
+    <DebugEngines>{351668CC-8477-4fbf-BFE3-5F1006E4DB1F}</DebugEngines>
+  </PropertyGroup>
+
+  <!-- Enable the .NET Core debugger required for Revit 2025 & 2026 -->
+  <PropertyGroup Condition="'$(Configuration)'=='Debug25+'">
+    <MSBuildRemoveProperties>TargetFrameworks</MSBuildRemoveProperties>
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
+    <UseManagedCoreDebugger>true</UseManagedCoreDebugger>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -56,9 +78,6 @@
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-
-    <!-- Force the project to use the legacy debugger engine -->
-    <DebugEngines>{351668CC-8477-4fbf-BFE3-5F1006E4DB1F}</DebugEngines>
 
     <!-- Invert the behavior of new .csproj format - exclude files by default -->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
@@ -233,10 +252,6 @@
   <Target Name="Build2023" AfterTargets="DispatchToInnerBuilds">
     <Message Importance="high" Text="*** running post-dispatch builds ***" />
     <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=$(Configuration); TargetFramework=net48; RevitVersion=2023"></MSBuild>
-  </Target>
-  <Target Name="Build2024" AfterTargets="DispatchToInnerBuilds">
-    <Message Importance="high" Text="*** running post-dispatch builds ***" />
-    <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=$(Configuration); TargetFramework=net48; RevitVersion=2024"></MSBuild>
   </Target>
   <Target Name="Build2026" AfterTargets="DispatchToInnerBuilds">
     <Message Importance="high" Text="*** running post-dispatch builds ***" />
